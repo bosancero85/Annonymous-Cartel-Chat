@@ -31,9 +31,35 @@ Stelle sicher, dass Python 3.9+ installiert ist.
    ```bash
    python client.py
    ```
+## 🌐 Netzwerk- & Tunnel-Konfiguration (ngrok)
+​Da das Projekt auf reinen TCP-Sockets basiert, ist ngrok die eleganteste Methode, um den Server ohne riskante Portfreigaben im Heim-Router weltweit erreichbar zu machen.
+​1. ngrok auf Kali Linux installieren (falls nicht vorhanden)
+
+```bash
+curl -s [https://ngrok-agent.s3.amazonaws.com/ngrok.asc](https://ngrok-agent.s3.amazonaws.com/ngrok.asc) | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb [https://ngrok-agent.s3.amazonaws.com](https://ngrok-agent.s3.amazonaws.com) buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt update && sudo apt install ngrok
+ngrok config add-authtoken DEIN_PERSONAL_AUTH_TOKEN
+```
+
+## 2. TCP-Tunnel auf dem Server starten
+​Starte den Pandora-Server lokal auf Port 55555 und öffne parallel dazu in einem neuen Terminal den ngrok TCP-Tunnel:
+
+```bash
+ngrok tcp 55555
+```
+
+3. Client anpassen
+​Lies die zugewiesene Adresse aus dem ngrok-Terminal ab (z. B. Forwarding tcp://0.tcp.ngrok.io:12345). Trage diese Daten vor der Kompilierung ganz oben in den Konfigurationsblock der client.py ein:
+
+```python
+# client.py - Zeile 14-15
+TARGET_HOST = '0.tcp.ngrok.io'  # ngrok Host hier eintragen
+TARGET_PORT = 12345             # Aktuellen ngrok Port hier eintragen
+```
 
 ## 🛠️ Kompilierung zur .exe (Windows)
-​Um das Programm als eigenständige App zu nutzen, verwende PyInstaller:
+​Um das Programm als eigenständige App zu nutzen, verwe```nde PyInstaller:
 ### Für den Server:
 
 ```bash
